@@ -228,6 +228,22 @@ def delete_server(server_id: str | int) -> bool:
     return deleted
 
 
+def update_server_status(
+    server_id: str | int,
+    *,
+    status: str,
+    last_update: str | None = None,
+) -> None:
+    if last_update is None:
+        last_update = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    with get_db() as db:
+        db.execute(
+            "UPDATE servers SET status = ?, last_update = ? WHERE id = ?",
+            (status, last_update, int(server_id)),
+        )
+        db.commit()
+
+
 def get_meta(key: str) -> str | None:
     with get_db() as db:
         row = db.execute("SELECT value FROM meta WHERE key = ?", (key,)).fetchone()

@@ -4,8 +4,8 @@
 <section class="dash-intro">
   <h1>Monitoring dashboard</h1>
   <p class="lede">
-    Live host metrics for the machine running this app. Panels below are placeholders
-    until metrics are wired.
+    Live host metrics for monitored Linux servers (read-only). Cards auto-refresh about every
+    {{ refresh_seconds }}s — use your browser refresh for an immediate update.
   </p>
 </section>
 
@@ -19,6 +19,7 @@
         <th>Host</th>
         <th>Status</th>
         <th>Last update</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -28,15 +29,40 @@
         <td><code>{{ s.host }}</code></td>
         <td><span class="status status-{{ s.status }}">{{ s.status }}</span></td>
         <td>{{ s.last_update }}</td>
+        <td>
+          <form method="post" action="{{ url_for('main.delete_server', server_id=s.id) }}"
+                class="inline-form"
+                onsubmit="return confirm('Remove server {{ s.name }}?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-ghost btn-danger">Remove</button>
+          </form>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
   {% else %}
   <p class="servers-empty">
-    No servers yet — inventory arrives in a later phase. Metrics will always reflect localhost.
+    No servers yet — add one below. For a quick local demo, use host <code>127.0.0.1</code>
+    (metrics collect on this machine without SSH).
   </p>
   {% endif %}
+
+  <form method="post" action="{{ url_for('main.add_server') }}" class="server-form" autocomplete="off">
+    {{ form.hidden_tag() }}
+    <h3 class="form-title">Add server</h3>
+    <div class="form-grid">
+      <label>{{ form.name.label.text }}{{ form.name() }}</label>
+      <label>{{ form.host.label.text }}{{ form.host(placeholder="127.0.0.1") }}</label>
+      <label>{{ form.ssh_port.label.text }}{{ form.ssh_port() }}</label>
+      <label>{{ form.ssh_username.label.text }}{{ form.ssh_username(placeholder="ubuntu") }}</label>
+      <label>{{ form.auth_type.label.text }}{{ form.auth_type() }}</label>
+      <label>{{ form.password.label.text }}{{ form.password(placeholder="SSH password") }}</label>
+      <label>{{ form.key_path.label.text }}{{ form.key_path(placeholder="~/.ssh/id_rsa") }}</label>
+    </div>
+    <p class="hint">Password <strong>or</strong> key path — never shown back in the UI after save.</p>
+    {{ form.submit(class_="btn") }}
+  </form>
 </section>
 
 <section class="metrics-section" aria-label="Host metrics">
@@ -45,6 +71,13 @@
     <article class="metric" data-metric="{{ m.key }}">
       <h2>{{ m.title }}</h2>
       <p class="metric-value {% if not m.value %}metric-empty{% endif %}">{{ m.display }}</p>
+      {% if m.lines %}
+      <ul class="metric-lines">
+        {% for line in m.lines %}
+        <li><code>{{ line }}</code></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
       <p class="hint">{{ m.subtitle }}</p>
     </article>
     {% endfor %}

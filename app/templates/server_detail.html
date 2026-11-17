@@ -9,6 +9,7 @@
     Host <code>{{ server.host }}</code>
     · port <code>{{ server.ssh_port }}</code>
     · status <span class="status status-{{ server.status }}">{{ server.status }}</span>
+    · updated {{ server.last_update }}
   </p>
 </section>
 
@@ -18,6 +19,13 @@
     <article class="metric" data-metric="{{ m.key }}">
       <h2>{{ m.title }}</h2>
       <p class="metric-value {% if not m.value %}metric-empty{% endif %}">{{ m.display }}</p>
+      {% if m.lines %}
+      <ul class="metric-lines">
+        {% for line in m.lines %}
+        <li><code>{{ line }}</code></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
       <p class="hint">{{ m.subtitle }}</p>
     </article>
     {% endfor %}

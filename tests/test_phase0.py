@@ -1,4 +1,4 @@
-"""Phase 0 smoke tests: Host Monitor dashboard UI shell (auth + store)."""
+"""Host Monitor dashboard UI shell tests (auth + store)."""
 
 from app import store
 
@@ -17,7 +17,6 @@ def test_dashboard_ok(auth_client, app):
     assert b"Host Monitor" in res.data
     assert b"Monitoring dashboard" in res.data
     assert b"demo-web-01" in res.data
-    # Metric panels from the snip (placeholders until later phases)
     for label in (
         b"CPU",
         b"Memory",
@@ -26,7 +25,6 @@ def test_dashboard_ok(auth_client, app):
         b"Network",
         b"Listening ports",
         b"Processes",
-        b"No data yet",
     ):
         assert label in res.data
 
@@ -36,6 +34,7 @@ def test_dashboard_empty_servers_copy(auth_client):
     assert res.status_code == 200
     assert b"No servers yet" in res.data
     assert b"Servers" in res.data
+    assert b"Add server" in res.data
 
 
 def test_server_detail_ok(auth_client, app):

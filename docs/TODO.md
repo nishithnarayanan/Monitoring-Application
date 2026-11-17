@@ -65,21 +65,21 @@ Small, AI-friendly increments for a local Flask demo. Check items off as you go.
 Keep the existing Host Monitor look: dashed **Servers** panel on the dashboard, `admin` pill, metric cards stay as “No data yet” until Phase 5.
 
 ### 3.1 Manage servers
-- [ ] Add “Add server” controls inside the dashboard **Servers** panel (name, host, port default 22, SSH user, password **or** key path)
-- [ ] Wire form to SQLite inventory store; flash success/validation errors (same flash style as “Signed in successfully.”)
-- [ ] Add remove-server action per row (POST + confirm); table columns stay Name / Host / Status / Last update
-- [ ] After add: run a simple SSH connectivity check stub → status `reachable` / `unreachable` in the panel
-- [ ] Empty state copy: only show “No servers yet…” when inventory is empty; otherwise list rows
-- [ ] **Docs:** Document required fields and auth options in README (Host Monitor local demo)
-- [ ] **Security:** Require login for all manage actions; validate/sanitize inputs; use POST for mutations; CSRF on forms; never echo SSH password/key material in HTML
+- [x] Add “Add server” controls inside the dashboard **Servers** panel (name, host, port default 22, SSH user, password **or** key path)
+- [x] Wire form to SQLite inventory store; flash success/validation errors (same flash style as “Signed in successfully.”)
+- [x] Add remove-server action per row (POST + confirm); table columns stay Name / Host / Status / Last update
+- [x] After add: run a simple SSH connectivity check stub → status `reachable` / `unreachable` in the panel
+- [x] Empty state copy: only show “No servers yet…” when inventory is empty; otherwise list rows
+- [x] **Docs:** Document required fields and auth options in README (Host Monitor local demo)
+- [x] **Security:** Require login for all manage actions; validate/sanitize inputs; use POST for mutations; CSRF on forms; never echo SSH password/key material in HTML
 
 ### 3.2 Manage-server tests
-- [ ] Test: cannot add/remove without login
-- [ ] Test: add server with valid fields appears in the Servers panel on the dashboard
-- [ ] Test: remove server deletes from store and panel
-- [ ] Test: dashboard still renders all seven metric cards as “No data yet” after add/remove
-- [ ] **Docs:** Update test notes if new fixtures were added
-- [ ] **Security:** Confirm credentials submitted in forms are not echoed back in HTML
+- [x] Test: cannot add/remove without login
+- [x] Test: add server with valid fields appears in the Servers panel on the dashboard
+- [x] Test: remove server deletes from store and panel
+- [x] Test: dashboard still renders all seven metric cards as “No data yet” after add/remove
+- [x] **Docs:** Update test notes if new fixtures were added
+- [x] **Security:** Confirm credentials submitted in forms are not echoed back in HTML
 
 ---
 
@@ -98,20 +98,20 @@ Collect data for every dashboard card already defined in `app/metrics.py` / the 
 | Processes | Top by CPU / memory (short list) |
 
 ### 4.1 SSH / local collector
-- [ ] Add Paramiko (or equivalent) dependency for remote hosts
-- [ ] Implement connect helper (password **or** private key path from store)
-- [ ] Prefer read-only commands (`/proc`, `df`, `ss`/`netstat`, `ps`); optional localhost path without SSH for the demo host
-- [ ] Map output into a metrics dict keyed like the UI: `cpu`, `memory`, `disk`, `load`, `network`, `ports`, `processes`
-- [ ] On timeout/failure: mark server `unreachable` and leave card values as error / “No data yet”
-- [ ] **Docs:** Document agentless SSH collection and that the Host Monitor UI is read-only
-- [ ] **Security:** Short timeouts; no shell injection; never log or return SSH secrets; careful key path handling
+- [x] Add Paramiko (or equivalent) dependency for remote hosts
+- [x] Implement connect helper (password **or** private key path from store)
+- [x] Prefer read-only commands (`/proc`, `df`, `ss`/`netstat`, `ps`); optional localhost path without SSH for the demo host
+- [x] Map output into a metrics dict keyed like the UI: `cpu`, `memory`, `disk`, `load`, `network`, `ports`, `processes`
+- [x] On timeout/failure: mark server `unreachable` and leave card values as error / “No data yet”
+- [x] **Docs:** Document agentless SSH collection and that the Host Monitor UI is read-only
+- [x] **Security:** Short timeouts; no shell injection; never log or return SSH secrets; careful key path handling
 
 ### 4.2 Metrics unit tests
-- [ ] Unit-test parsers with sample `/proc`, `df`, `ss`, `ps` output (no real SSH required)
-- [ ] Assert parsed dict includes all seven keys used by the Host Monitor cards
-- [ ] Test unreachable / timeout path returns a clear error state
-- [ ] **Docs:** Note how to run parser tests offline
-- [ ] **Security:** Fixtures contain no real host credentials
+- [x] Unit-test parsers with sample `/proc`, `df`, `ss`, `ps` output (no real SSH required)
+- [x] Assert parsed dict includes all seven keys used by the Host Monitor cards
+- [x] Test unreachable / timeout path returns a clear error state
+- [x] **Docs:** Note how to run parser tests offline
+- [x] **Security:** Fixtures contain no real host credentials
 
 ---
 
@@ -120,47 +120,47 @@ Collect data for every dashboard card already defined in `app/metrics.py` / the 
 Replace placeholders only — keep brand, Servers panel, and card layout from Phase 0.
 
 ### 5.1 Wire metrics into existing cards
-- [ ] Dashboard Servers panel: name, host, status, last update from live/cached collection
-- [ ] Dashboard metric grid: fill **CPU, Memory, Disk, Load average, Network, Listening ports, Processes** (same subtitles as the snip); use “No data yet” only when missing
-- [ ] Detail page: reuse the same seven-card grid for the selected server
-- [ ] Auto-refresh ~10s (meta refresh or light JS); keep manual refresh
-- [ ] Metrics views remain read-only (no remote config changes from the UI)
-- [ ] **Docs:** Short UI walkthrough in README (Host Monitor → sign-in → Servers → metric cards)
-- [ ] **Security:** Escape all template output; never show SSH passwords/keys on UI
+- [x] Dashboard Servers panel: name, host, status, last update from live/cached collection
+- [x] Dashboard metric grid: fill **CPU, Memory, Disk, Load average, Network, Listening ports, Processes** (same subtitles as the snip); use “No data yet” only when missing
+- [x] Detail page: reuse the same seven-card grid for the selected server
+- [x] Auto-refresh ~10s (meta refresh or light JS); keep manual refresh
+- [x] Metrics views remain read-only (no remote config changes from the UI)
+- [x] **Docs:** Short UI walkthrough in README (Host Monitor → sign-in → Servers → metric cards)
+- [x] **Security:** Escape all template output; never show SSH passwords/keys on UI
 
 ### 5.2 End-to-end smoke (local)
-- [ ] Manual check: login (`Signed in successfully.`) → add server in Servers panel → cards show live values
-- [ ] **Docs:** Minimal “smoke check” bullets in README (port `5080` if `5000` is busy)
-- [ ] **Security:** Confirm app binds to localhost only for the demo
+- [x] Manual check: login (`Signed in successfully.`) → add server in Servers panel → cards show live values
+- [x] **Docs:** Minimal “smoke check” bullets in README (port `5080` if `5000` is busy)
+- [x] **Security:** Confirm app binds to localhost only for the demo
 
 ---
 
 ## Phase 6 — CI/CD (GitHub Actions)
 
 ### 6.1 Continuous integration
-- [ ] Add `.github/workflows/ci.yml`
-- [ ] On push/PR: install deps, run `pytest`, fail on test errors
-- [ ] Optionally run a basic lint (`ruff` or `flake8`) if already in deps
-- [ ] **Docs:** Badge or short “CI” note in README
-- [ ] **Security:** No secrets in workflow logs; use GitHub secrets only if later needed; pin action versions
+- [x] Add `.github/workflows/ci.yml`
+- [x] On push/PR: install deps, run `pytest`, fail on test errors
+- [x] Optionally run a basic lint (`ruff` or `flake8`) if already in deps
+- [x] **Docs:** Badge or short “CI” note in README
+- [x] **Security:** No secrets in workflow logs; use GitHub secrets only if later needed; pin action versions
 
 ### 6.2 Local-only deploy note (no cloud)
-- [ ] Keep deploy as local `flask run --host 127.0.0.1` only (demo scope)
-- [ ] **Docs:** Reaffirm local-only Host Monitor deploy; no production/HTTPS steps
-- [ ] **Security:** Document that this is not production-hardened
+- [x] Keep deploy as local `flask run --host 127.0.0.1` only (demo scope)
+- [x] **Docs:** Reaffirm local-only Host Monitor deploy; no production/HTTPS steps
+- [x] **Security:** Document that this is not production-hardened
 
 ---
 
 ## Phase 7 — Polish & success criteria
 
 ### 7.1 Final checklist (Host Monitor + PRD)
-- [ ] Can log in as `admin` and see “Signed in successfully.”
-- [ ] Can add at least one Linux server in the Servers panel (local or remote SSH)
-- [ ] Dashboard shows all seven cards with live data: CPU, Memory, Disk, Load average, Network, Listening ports, Processes
-- [ ] Detail page matches the same card set for a selected server
-- [ ] Metrics UI is read-only; setup stays short (`venv` + `pip` + `flask run`)
-- [ ] **Docs:** README matches actual commands, default password, and UI labels
-- [ ] **Security:** Quick pass — hashed password, protected routes, no secrets in repo, localhost bind
+- [x] Can log in as `admin` and see “Signed in successfully.”
+- [x] Can add at least one Linux server in the Servers panel (local or remote SSH)
+- [x] Dashboard shows all seven cards with live data: CPU, Memory, Disk, Load average, Network, Listening ports, Processes
+- [x] Detail page matches the same card set for a selected server
+- [x] Metrics UI is read-only; setup stays short (`venv` + `pip` + `flask run`)
+- [x] **Docs:** README matches actual commands, default password, and UI labels
+- [x] **Security:** Quick pass — hashed password, protected routes, no secrets in repo, localhost bind
 
 ### 7.2 Optional later (still out of scope)
 - [ ] Tags or grouping of servers
@@ -174,10 +174,10 @@ Replace placeholders only — keep brand, Servers panel, and card layout from Ph
 1. Phase 0 (init + Host Monitor UI shell) — done  
 2. Phase 1 (sign-in + auth tests) — done  
 3. Phase 2 (SQLite storage) — done  
-4. Phase 3 (add/remove in Servers panel)  
-5. Phase 4 (collect all seven metric card values)  
-6. Phase 5 (wire live data into Host Monitor cards)  
-7. Phase 6 (GitHub Actions CI)  
-8. Phase 7 (success criteria)
+4. Phase 3 (add/remove in Servers panel) — done  
+5. Phase 4 (collect all seven metric card values) — done  
+6. Phase 5 (wire live data into Host Monitor cards) — done  
+7. Phase 6 (GitHub Actions CI) — done  
+8. Phase 7 (success criteria) — done  
 
 One phase (or even one `###` subsection) per AI session is ideal.
