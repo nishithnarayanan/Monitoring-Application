@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<section class="auth">
+  <h1>Sign in</h1>
+  <p class="muted">Demo admin account only — local use.</p>
+  <form method="post" action="{{ url_for('main.login', next=request.args.get('next')) }}" class="auth-form">
+    {{ form.hidden_tag() }}
+    <label>
+      {{ form.username.label.text }}
+      {{ form.username(autocomplete="username", autofocus=true) }}
+    </label>
+    <label>
+      {{ form.password.label.text }}
+      {{ form.password(autocomplete="current-password") }}
+    </label>
+    {{ form.submit(class_="btn") }}
+  </form>
+</section>
+{% endblock %}

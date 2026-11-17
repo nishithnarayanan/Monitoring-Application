@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Monitoring dashboard · Host Monitor{% endblock %}
+{% block content %}
+<section class="dash-intro">
+  <h1>Monitoring dashboard</h1>
+  <p class="lede">
+    Live host metrics for the machine running this app. Panels below are placeholders
+    until metrics are wired.
+  </p>
+</section>
+
+<section class="servers-panel" aria-labelledby="servers-heading">
+  <h2 id="servers-heading" class="panel-label">Servers</h2>
+  {% if servers %}
+  <table class="servers">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Host</th>
+        <th>Status</th>
+        <th>Last update</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in servers %}
+      <tr>
+        <td><a href="{{ url_for('main.server_detail', server_id=s.id) }}">{{ s.name }}</a></td>
+        <td><code>{{ s.host }}</code></td>
+        <td><span class="status status-{{ s.status }}">{{ s.status }}</span></td>
+        <td>{{ s.last_update }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="servers-empty">
+    No servers yet — inventory arrives in a later phase. Metrics will always reflect localhost.
+  </p>
+  {% endif %}
+</section>
+
+<section class="metrics-section" aria-label="Host metrics">
+  <div class="metrics-grid">
+    {% for m in metrics %}
+    <article class="metric" data-metric="{{ m.key }}">
+      <h2>{{ m.title }}</h2>
+      <p class="metric-value {% if not m.value %}metric-empty{% endif %}">{{ m.display }}</p>
+      <p class="hint">{{ m.subtitle }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

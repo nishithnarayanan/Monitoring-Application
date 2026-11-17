@@ -1,0 +1,31 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Secrets & local config
+.env
+.env.*
+!.env.example
+
+# Local data stores
+*.db
+*.sqlite
+*.sqlite3
+data/
+instance/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store

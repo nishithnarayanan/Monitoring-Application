@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Host Monitor{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-block">
+      <a class="brand" href="{{ url_for('main.dashboard') }}">Host Monitor</a>
+      <p class="brand-sub">Local Linux demo · read-only</p>
+    </div>
+    <div class="header-actions">
+      {% if g.user %}
+      <span class="user-pill">{{ g.user }}</span>
+      <form method="post" action="{{ url_for('main.logout') }}" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-ghost">Sign out</button>
+      </form>
+      {% else %}
+      <a class="btn btn-ghost" href="{{ url_for('main.login') }}">Sign in</a>
+      {% endif %}
+    </div>
+  </header>
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="flash flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    Read-only metrics UI · bind to 127.0.0.1 · not for production
+  </footer>
+</body>
+</html>

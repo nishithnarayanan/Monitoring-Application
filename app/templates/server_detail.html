@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{% if server %}{{ server.name }}{% else %}Not found{% endif %} · Host Monitor{% endblock %}
+{% block content %}
+<p><a class="back" href="{{ url_for('main.dashboard') }}">← Dashboard</a></p>
+{% if server %}
+<section class="dash-intro">
+  <h1>{{ server.name }}</h1>
+  <p class="lede">
+    Host <code>{{ server.host }}</code>
+    · port <code>{{ server.ssh_port }}</code>
+    · status <span class="status status-{{ server.status }}">{{ server.status }}</span>
+  </p>
+</section>
+
+<section class="metrics-section" aria-label="Server metrics">
+  <div class="metrics-grid">
+    {% for m in metrics %}
+    <article class="metric" data-metric="{{ m.key }}">
+      <h2>{{ m.title }}</h2>
+      <p class="metric-value {% if not m.value %}metric-empty{% endif %}">{{ m.display }}</p>
+      <p class="hint">{{ m.subtitle }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% else %}
+<section>
+  <h1>Server not found</h1>
+  <p>No server with id <code>{{ server_id }}</code>.</p>
+</section>
+{% endif %}
+{% endblock %}
