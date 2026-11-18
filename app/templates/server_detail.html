@@ -10,6 +10,7 @@
     · port <code>{{ server.ssh_port }}</code>
     · status <span class="status status-{{ server.status }}">{{ server.status }}</span>
     · updated {{ server.last_update }}
+    · auto-refresh {{ 'on' if auto_refresh else 'off' }}
   </p>
 </section>
 
