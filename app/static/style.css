@@ -376,6 +376,16 @@ code {
   border-color: rgba(232, 93, 93, 0.4);
 }
 
+.refresh-toggle.refresh-on {
+  border-color: rgba(62, 207, 142, 0.45);
+  color: var(--ok);
+}
+
+.refresh-toggle.refresh-off {
+  border-color: var(--border);
+  color: var(--muted);
+}
+
 .metric-lines {
   list-style: none;
   margin: 0 0 0.5rem;

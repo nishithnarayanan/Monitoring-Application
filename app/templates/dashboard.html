@@ -4,8 +4,12 @@
 <section class="dash-intro">
   <h1>Monitoring dashboard</h1>
   <p class="lede">
-    Live host metrics for monitored Linux servers (read-only). Cards auto-refresh about every
-    {{ refresh_seconds }}s — use your browser refresh for an immediate update.
+    Live host metrics for monitored Linux servers (read-only).
+    {% if auto_refresh %}
+    Auto-refresh is <strong>on</strong> (~{{ refresh_seconds }}s).
+    {% else %}
+    Auto-refresh is <strong>off</strong> — use the header toggle or browser refresh.
+    {% endif %}
   </p>
 </section>
 

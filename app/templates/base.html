@@ -17,6 +17,15 @@
     </div>
     <div class="header-actions">
       {% if g.user %}
+      <form method="post" action="{{ url_for('main.toggle_auto_refresh') }}" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit"
+                class="btn btn-ghost refresh-toggle {% if auto_refresh %}refresh-on{% else %}refresh-off{% endif %}"
+                title="Toggle auto-refresh">
+          Auto-refresh: {{ 'On' if auto_refresh else 'Off' }}
+        </button>
+      </form>
       <span class="user-pill">{{ g.user }}</span>
       <form method="post" action="{{ url_for('main.logout') }}" class="inline-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

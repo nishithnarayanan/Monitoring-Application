@@ -28,6 +28,17 @@ from app.metrics import panels_from_data, placeholder_metrics
 
 bp = Blueprint("main", __name__)
 
+DEFAULT_REFRESH_SECONDS = 10
+
+
+def _auto_refresh_enabled() -> bool:
+    # Default on for the demo; user can toggle off in the header.
+    return bool(session.get("auto_refresh", True))
+
+
+def _refresh_seconds() -> int | None:
+    return DEFAULT_REFRESH_SECONDS if _auto_refresh_enabled() else None
+
 
 class LoginForm(FlaskForm):
     username = StringField(
@@ -134,6 +145,22 @@ def logout():
     return redirect(url_for("main.login"))
 
 
+@bp.post("/settings/auto-refresh")
+@login_required
+def toggle_auto_refresh():
+    session["auto_refresh"] = not _auto_refresh_enabled()
+    enabled = _auto_refresh_enabled()
+    flash(
+        f"Auto-refresh {'on' if enabled else 'off'}"
+        + (f" (~{DEFAULT_REFRESH_SECONDS}s)." if enabled else "."),
+        "info",
+    )
+    next_url = request.form.get("next") or url_for("main.dashboard")
+    if not next_url.startswith("/"):
+        next_url = url_for("main.dashboard")
+    return redirect(next_url)
+
+
 @bp.get("/")
 @login_required
 def dashboard():
@@ -145,7 +172,8 @@ def dashboard():
         servers=servers,
         metrics=metrics,
         form=form,
-        refresh_seconds=10,
+        refresh_seconds=_refresh_seconds(),
+        auto_refresh=_auto_refresh_enabled(),
     )
 
 
@@ -215,6 +243,7 @@ def server_detail(server_id: str):
                 server_id=server_id,
                 metrics=placeholder_metrics(),
                 refresh_seconds=None,
+                auto_refresh=_auto_refresh_enabled(),
             ),
             404,
         )
@@ -223,5 +252,6 @@ def server_detail(server_id: str):
         server=server,
         server_id=server_id,
         metrics=metrics,
-        refresh_seconds=10,
+        refresh_seconds=_refresh_seconds(),
+        auto_refresh=_auto_refresh_enabled(),
     )
