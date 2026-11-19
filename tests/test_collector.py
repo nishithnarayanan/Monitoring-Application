@@ -37,7 +37,7 @@ SAMPLE_PS = """  PID %CPU %MEM COMMAND
 """
 
 
-def test_parsers_and_seven_keys():
+def test_build_metrics_dict_has_seven_keys():
     data = build_metrics_dict(
         cpu_raw=SAMPLE_STAT,
         mem_raw=SAMPLE_MEM,
@@ -60,17 +60,44 @@ def test_parsers_and_seven_keys():
     assert data["error"] is None
 
 
-def test_individual_parsers_smoke():
+def test_parse_cpu_returns_busy_percent():
     assert parse_cpu(SAMPLE_STAT) == 20.0
+
+
+def test_parse_memory_reports_used_kb():
     assert parse_memory(SAMPLE_MEM)["used_kb"] == 5000000
-    assert parse_load(SAMPLE_LOAD).startswith("0.50")
+
+
+def test_parse_load_formats_three_intervals():
+    assert parse_load(SAMPLE_LOAD) == "0.50 / 0.60 / 0.70"
+
+
+def test_parse_disk_reports_used_kb():
     assert parse_disk(SAMPLE_DF)["used_kb"] == 4000000
+
+
+def test_parse_network_skips_loopback():
     assert parse_network(SAMPLE_NET)["rx_bytes"] == 2000
+
+
+def test_parse_ports_keeps_listener_rows():
     assert "sshd" in parse_ports(SAMPLE_SS)[0]
-    assert "systemd" in parse_processes(SAMPLE_PS)[0]
 
 
-def test_ssh_unreachable_returns_error_state():
+def test_parse_processes_drops_header():
+    procs = parse_processes(SAMPLE_PS)
+    assert len(procs) == 2
+    assert "systemd" in procs[0]
+
+
+def test_ssh_unreachable_returns_error_state(monkeypatch):
+    """Simulated connection failure; no live SSH."""
+    import paramiko
+
+    def fail_connect(self, *args, **kwargs):
+        raise OSError("simulated unreachable host")
+
+    monkeypatch.setattr(paramiko.SSHClient, "connect", fail_connect)
     data = collect_via_ssh(
         host="203.0.113.10",  # TEST-NET documentation IP
         port=22,

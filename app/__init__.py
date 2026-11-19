@@ -1,7 +1,10 @@
 """Flask application factory for the monitoring demo."""
 
+from __future__ import annotations
+
 import os
 from pathlib import Path
+from typing import Any
 
 from flask import Flask
 from flask_wtf import CSRFProtect
@@ -10,7 +13,7 @@ from werkzeug.security import generate_password_hash
 csrf = CSRFProtect()
 
 
-def create_app(test_config: dict | None = None) -> Flask:
+def create_app(test_config: dict[str, Any] | None = None) -> Flask:
     app = Flask(__name__)
 
     # Local-demo defaults. Prefer env for SECRET_KEY and demo password.
