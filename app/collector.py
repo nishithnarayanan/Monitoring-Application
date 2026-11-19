@@ -163,6 +163,20 @@ def build_metrics_dict(
     }
 
 
+def _unreachable() -> dict[str, Any]:
+    """Metrics dict shown when a host cannot be collected from."""
+    return {
+        "error": "unreachable",
+        "cpu": None,
+        "memory": None,
+        "disk": None,
+        "load": None,
+        "network": None,
+        "ports": [],
+        "processes": [],
+    }
+
+
 def _run_local(cmd: str) -> str:
     result = subprocess.run(
         ["bash", "-c", cmd],
@@ -185,10 +199,9 @@ def collect_local() -> dict[str, Any]:
             ports_raw=_run_local(CMD_PORTS),
             procs_raw=_run_local(CMD_PROCS),
         )
-    except Exception as exc:  # noqa: BLE001 — surface as unreachable to UI
+    except (OSError, subprocess.SubprocessError) as exc:
         logger.info("Local collect failed: %s", type(exc).__name__)
-        return {"error": "unreachable", "cpu": None, "memory": None, "disk": None,
-                "load": None, "network": None, "ports": [], "processes": []}
+        return _unreachable()
 
 
 def _ssh_run(client, cmd: str) -> str:
@@ -207,7 +220,9 @@ def collect_via_ssh(
     import paramiko
 
     client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    # Verify against known host keys; unknown hosts are rejected (no AutoAddPolicy).
+    client.load_system_host_keys()
+    client.set_missing_host_key_policy(paramiko.RejectPolicy())
     try:
         kwargs: dict[str, Any] = {
             "hostname": host,
@@ -232,23 +247,14 @@ def collect_via_ssh(
             procs_raw=_ssh_run(client, CMD_PROCS),
         )
         return data
-    except Exception as exc:  # noqa: BLE001
+    except (OSError, EOFError, paramiko.SSHException) as exc:
         logger.info("SSH collect failed for host=%s: %s", host, type(exc).__name__)
-        return {
-            "error": "unreachable",
-            "cpu": None,
-            "memory": None,
-            "disk": None,
-            "load": None,
-            "network": None,
-            "ports": [],
-            "processes": [],
-        }
+        return _unreachable()
     finally:
         try:
             client.close()
-        except Exception:  # noqa: BLE001
-            pass
+        except (OSError, paramiko.SSHException):
+            logger.debug("SSH client close failed (non-fatal)")
 
 
 def check_connectivity(

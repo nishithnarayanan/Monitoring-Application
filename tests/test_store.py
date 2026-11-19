@@ -5,7 +5,7 @@ import logging
 from app import store
 
 
-def test_add_list_remove_server(app):
+def test_add_server_then_list_it(app):
     with app.app_context():
         assert store.list_servers() == []
 
@@ -26,6 +26,16 @@ def test_add_list_remove_server(app):
         assert len(listed) == 1
         assert listed[0]["id"] == created["id"]
 
+
+def test_delete_server_removes_it_once(app):
+    with app.app_context():
+        created = store.add_server(
+            name="web-1",
+            host="10.0.0.5",
+            ssh_username="ubuntu",
+            auth_type="password",
+            password="not-a-real-secret",
+        )
         assert store.delete_server(created["id"]) is True
         assert store.list_servers() == []
         assert store.delete_server(created["id"]) is False

@@ -1,16 +1,20 @@
 """Session auth helpers for the demo admin user."""
 
-from functools import wraps
+from __future__ import annotations
 
-from flask import current_app, flash, g, redirect, request, session, url_for
+from collections.abc import Callable
+from functools import wraps
+from typing import Any
+
+from flask import current_app, g, redirect, request, session, url_for
 from werkzeug.security import check_password_hash
 
 
-def login_required(view):
+def login_required(view: Callable[..., Any]) -> Callable[..., Any]:
     """Redirect unauthenticated users to the login page."""
 
     @wraps(view)
-    def wrapped(*args, **kwargs):
+    def wrapped(*args: Any, **kwargs: Any) -> Any:
         if session.get("user") != current_app.config["ADMIN_USERNAME"]:
             return redirect(url_for("main.login", next=request.path))
         return view(*args, **kwargs)

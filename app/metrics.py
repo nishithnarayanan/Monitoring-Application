@@ -27,7 +27,7 @@ def _fmt_kb(kb: int) -> str:
     return _fmt_bytes(kb * 1024)
 
 
-def placeholder_metrics() -> list[dict]:
+def placeholder_metrics() -> list[dict[str, Any]]:
     """Return UI-ready panels with no live values yet."""
     return [
         {
@@ -40,7 +40,7 @@ def placeholder_metrics() -> list[dict]:
     ]
 
 
-def panels_from_data(data: dict[str, Any] | None) -> list[dict]:
+def panels_from_data(data: dict[str, Any] | None) -> list[dict[str, Any]]:
     """Map collector output into the seven Host Monitor cards."""
     if not data or data.get("error"):
         panels = placeholder_metrics()
@@ -49,7 +49,7 @@ def panels_from_data(data: dict[str, Any] | None) -> list[dict]:
                 p["display"] = "Unreachable"
         return panels
 
-    out: list[dict] = []
+    out: list[dict[str, Any]] = []
     for panel in METRIC_PANELS:
         key = panel["key"]
         value: Any = data.get(key)

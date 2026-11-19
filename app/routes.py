@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from flask import (
     Blueprint,
     flash,
@@ -12,6 +14,7 @@ from flask import (
     url_for,
 )
 from flask_wtf import FlaskForm
+from werkzeug.wrappers import Response
 from wtforms import (
     IntegerField,
     PasswordField,
@@ -73,7 +76,7 @@ class ServerForm(FlaskForm):
     key_path = StringField("Private key path", validators=[Optional(), Length(max=512)])
     submit = SubmitField("Add server")
 
-    def validate(self, extra_validators=None) -> bool:
+    def validate(self, extra_validators: Any = None) -> bool:
         ok = super().validate(extra_validators=extra_validators)
         if not ok:
             return False
@@ -86,7 +89,7 @@ class ServerForm(FlaskForm):
         return True
 
 
-def _metrics_for_server_id(server_id: str | None) -> tuple[list[dict], dict | None]:
+def _metrics_for_server_id(server_id: str | None) -> tuple[list[dict[str, Any]], dict[str, Any] | None]:
     """Collect metrics and refresh status when a server id is known."""
     if not server_id:
         return placeholder_metrics(), None
@@ -105,7 +108,7 @@ def _metrics_for_server_id(server_id: str | None) -> tuple[list[dict], dict | No
     return panels_from_data(data), public
 
 
-def _dashboard_metrics(servers: list[dict]) -> list[dict]:
+def _dashboard_metrics(servers: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Prefer first inventory server; else live localhost sample for the demo host."""
     if servers:
         panels, _ = _metrics_for_server_id(servers[0]["id"])
@@ -117,7 +120,7 @@ def _dashboard_metrics(servers: list[dict]) -> list[dict]:
 
 @bp.get("/login")
 @bp.post("/login")
-def login():
+def login() -> str | Response:
     if session.get("user"):
         return redirect(url_for("main.dashboard"))
 
@@ -139,7 +142,7 @@ def login():
 
 @bp.post("/logout")
 @login_required
-def logout():
+def logout() -> Response:
     session.clear()
     flash("Signed out.", "info")
     return redirect(url_for("main.login"))
@@ -147,7 +150,7 @@ def logout():
 
 @bp.post("/settings/auto-refresh")
 @login_required
-def toggle_auto_refresh():
+def toggle_auto_refresh() -> Response:
     session["auto_refresh"] = not _auto_refresh_enabled()
     enabled = _auto_refresh_enabled()
     flash(
@@ -163,7 +166,7 @@ def toggle_auto_refresh():
 
 @bp.get("/")
 @login_required
-def dashboard():
+def dashboard() -> str:
     form = ServerForm()
     metrics = _dashboard_metrics(store.list_servers())
     servers = store.list_servers()
@@ -179,7 +182,7 @@ def dashboard():
 
 @bp.post("/servers")
 @login_required
-def add_server():
+def add_server() -> Response:
     form = ServerForm()
     if form.validate_on_submit():
         auth_type = form.auth_type.data
@@ -223,7 +226,7 @@ def add_server():
 
 @bp.post("/servers/<server_id>/delete")
 @login_required
-def delete_server(server_id: str):
+def delete_server(server_id: str) -> Response:
     if store.delete_server(server_id):
         flash("Server removed.", "info")
     else:
@@ -233,7 +236,7 @@ def delete_server(server_id: str):
 
 @bp.get("/servers/<server_id>")
 @login_required
-def server_detail(server_id: str):
+def server_detail(server_id: str) -> str | tuple[str, int]:
     metrics, server = _metrics_for_server_id(server_id)
     if server is None:
         return (
